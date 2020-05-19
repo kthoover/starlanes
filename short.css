@@ -1,0 +1,427 @@
+@keyframes planetRotate {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: -200% center;
+    }
+  }
+  body {
+    background: #000000;
+    color: #fff;
+    height: 100%;
+    width: 100vw;
+  
+  }
+  .portal_table {
+    height: 100%;
+    width: 100%;
+    margin: 10px 0 40px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 680px);
+    grid-template-rows: repeat(auto-fill, 1420px);
+    grid-gap: 40px;
+    align-items: top;
+    justify-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    font-family: "Major Mono Display";
+    text-transform: lowercase;
+  }
+  table {
+    border: 1px solid white;
+    font-family: "Major Mono Display";
+    text-transform: lowercase;
+    text-align: center;
+    font-size: 23px;
+    white-space:pre;
+    /* background-color: red; */
+    border-collapse: collapse
+  }
+  .tablebox {
+    border: 1px solid white;
+    font-family: "Major Mono Display";
+    text-transform: lowercase;
+    text-align: center;
+    font-size: 23px;
+    white-space:pre;
+    /* background-color: red; */
+    border-collapse: collapse
+  }
+
+  .grid-section   {
+    height: 100%;
+    width: 100%;
+    margin: 10px 0 40px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 190px);
+    grid-template-rows: repeat(auto-fill, 400px);
+    grid-gap: 40px;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    font-family: "Major Mono Display";
+    text-transform: lowercase;
+  }
+  .grid-section2   {
+    height: 100%;
+    width: 100%;
+    margin: 0px 0 40px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 790px);
+    grid-template-rows: repeat(auto-fill, 820px);
+    grid-gap: 40px;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    font-family: "Major Mono Display";
+    text-transform: lowercase;
+  
+  }
+  
+    
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    
+    
+    .card__planet::before {
+      content: '';
+      position: absolute;
+      height: 190px;
+      z-index: -2;
+      left: 50%;
+      top: 0%;
+      border-left: 1px dashed rgba(255, 255, 255, 0.25);
+    }
+  
+    .stellar__atmosphere {
+      box-shadow: inset 10px 0px 12px -2px rgba(255, 255, 255, 0.2), inset -70px 0px 50px 0px black, -5px 0px 10px -4px  #b3caff;
+      height: 190px;
+      width: 190px;
+      position: relative;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 65%);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .planet__atmosphere {
+      box-shadow: inset 10px 0px 12px -2px rgba(255, 255, 255, 0.2), inset -70px 0px 50px 0px black, -5px 0px 10px -4px  #b3caff;
+      height: 190px;
+      width: 190px;
+      position: relative;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 65%);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .planet__atmosphere2 {
+      height: 590px;          /* big planetds  590px vs 190px */
+      width: 590px;           /* big planetds  590px vs 190px */
+      position: relative;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 65%);
+      border-radius: 400px;   /* big planetds 400px vs 100px */
+      overflow: hidden;
+    }
+    .planet__surface {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: -1;
+      background-size: cover;
+      background-image: url(images/earth.jpg);
+      transform: rotate(-45deg);
+      animation: planetRotate 2s linear infinite;
+    }
+    
+    .card__info {
+      width: 100%;
+    }
+    
+    .info__title {
+      text-align: center;
+      font-size: 28px;
+    }
+    .info__form {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .info__item {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .info__label {
+      font-size: 11px;
+    }
+    .info__line {
+      flex: 1;
+      margin: 0 5px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+    }
+
+    
+
+    .portal-entrance {
+      /* Finally, a use for "groove"! */
+      border: 10px groove rgb(156, 231, 228);
+    
+      display: table-cell;
+      border-radius: 999px;
+      animation: spin 15s linear infinite;
+    }
+    
+    .portal-exit {
+      /* Finally, a use for "groove"! */
+      border: 10px groove rgb(156, 231, 228);
+    
+      display: table-cell;
+      border-radius: 999px;
+      animation: spin 15s linear infinite reverse;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg) }
+      to { transform: rotate(360deg) }
+    }
+    
+
+    .controlicon {
+      width: 190px;
+
+    }
+    
+    .inline-block{
+      display: inline-block;
+      margin: 100px;
+      margin-top: 10px;
+      width: 250px;
+      height: 100px;
+      padding: 5px;
+      border: 1px solid blue;    
+      background-color: red;
+    }
+
+
+    /********************       modal stuff (maybe delete h1, h2, and p styles          ************************************/
+
+
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 1vw; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      
+    }
+    
+    .modal-content {
+      position: relative;
+      background-color: #fefefe;
+      background-color: rgb(147, 170, 173);      
+      margin: auto;
+      padding: 0;
+      border: .2vw solid #888;
+      border-radius: 20px;
+      width: 80%;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+      animation-name: zoom;
+      animation-duration: 0.4s
+    }
+    
+    /* Add Animation */
+    
+    
+    @keyframes zoom {
+      from {transform:scale(0)} 
+      to {transform:scale(1)}
+    }
+    
+    /* The Close Button */
+    .close {
+      color: red;
+      float: right;
+      font-size: 3vw;
+      font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: crosshair;
+    }
+    
+    .modal-header {
+      padding:  .1vw 1vw;
+      background-color: peachpuff;
+      color: red;
+      border-radius: 17px;
+    }
+    
+    .modal-body {padding: .1vw 2vw;}
+    
+    h1 {
+      font-size: 2vw;
+    }
+    
+    h2 {
+      font-size: 1.6vw;
+    }
+    p {
+      font-size: 1.1vw;
+    }
+    
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 1.5vw;
+      border-radius: 1.5vw;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      transition: opacity .2s;
+    }
+    
+    .slider:hover {
+      opacity: 1;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 3vw;
+      height: 3vw;
+      border-radius: 50%;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+    .sliderspanoutput {
+        padding-left: 3vw;
+    }
+    
+    .level-selector {
+        padding-bottom: .5vw;  
+        padding-top: 3vw;
+        padding-left: 25vw;
+    }
+
+
+
+    /********************       testing ground and junk          ***************************************/
+    .shadowbox {
+      position: relative;
+      margin: 100px auto;
+      width: 80%;
+  }
+  
+  .shadowbox:after {
+      position: absolute;
+      content: '';
+      top: 10px;
+      bottom: 10px;
+      left: 0;
+      width: 20px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.7);
+      border-radius: 50%;
+  }
+  
+  .shadowbox:before {
+      position: absolute;
+      content: '';
+      top: 10px;
+      bottom: 10px;
+      right: 0;
+      width: 15px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.7);
+      border-radius: 50%;
+  }
+  
+  .shadowbox.content {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      padding: 30px;
+      z-index: 10;
+  }
+
+
+
+
+  /********************       interaction table          ***************************************/
+  #buy {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    margin: 15px;
+    /* width: 100%; */
+    /* box-sizing: border-box;
+    border-radius: 100px; */
+  }
+  
+  #buy td, #buy th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  
+  }
+  
+  #buy tr:nth-child(even){background-color: #94dee4;}
+  
+  #buy tr:hover {background-color: #ddd;}
+  
+  #buy th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    text-align: center;
+    background-color: rgb(76, 119, 175);
+    color: white;
+    width: 200px;
+  }
+
+  .large {
+    /* background-color: purple; */
+    /* font-size: 400px; */
+    width: 50px;
+    /* zoom: 2; */
+    transform:  scale(1.5) translate(20px);
+    /* transform: translateX(20px); */
+    /* text-align: center; */
+}
+
+
+.button {
+  display: block;
+  padding: 1vw 1.5vw;
+  font-size: 1.5vw;
+  margin-left: 33vw;
+  margin-top: 3vw;
+  margin-bottom: 2vw;
+  padding-top: 1vw;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 1vw;
+  box-shadow: 0 .5vw #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 vw #666;
+  transform: translateY(.25vw);
+}
