@@ -2,6 +2,7 @@
 /////////////////////////            Define Parameters                    ///////////////////////////////////////
 
 // https://codepen.io/joshbader/pen/EjXgqr
+// this is a test to see how online editing works
 let hidelist = true;
 let numsys = 20;
 let cp_icons =["images/controlpannelicon.jpg", "images/sunicon.png","images/shipicon.png", "images/portalicon.png", "images/mapicon.png"];
