@@ -2,7 +2,6 @@
 /////////////////////////            Define Parameters                    ///////////////////////////////////////
 
 // https://codepen.io/joshbader/pen/EjXgqr
-// this is a test to see how online editing works
 let hidelist = true;
 let numsys = 20;
 let cp_icons =["images/controlpannelicon.jpg", "images/sunicon.png","images/shipicon.png", "images/portalicon.png", "images/mapicon.png"];
@@ -23,7 +22,7 @@ let planet_info_list = ["tilt", "day", "year", "life", "inhabited", "tech"];
 let planet_info_list_suffix = ["°", " hours", " days", "life", "inhabited", "tech"];
 let star_info_list = ["tilt", "day", "year", "color", "color", "name"];
 let star_info_list_suffix = ["°", " hours", " days", "", "", ""];
-let planet_visit_info_list = ["buy", "sell", "mine", "ally", "attack", "puzzle", "culture"];
+let planet_visit_info_list = ["buy", "sell", "mine", "politics", "outpost", "puzzle", "culture"];
 let planet_visit_info_list_suffix = ["kronar", "kronar", "ergs", "points", "points", "answers", "stuff"];
 let portal_info_list = ["entrance", "exit", "distance", "fees", "monsters", "special"];
 let portal_info_list_suffix = ["", "", " light-years", " kronars", "", ""];
@@ -89,7 +88,7 @@ const interactionModalHTML = '<div id="interactionModal" class="modal"><div clas
       //  console.log(a_planet.name);
       let temp_resource_list = Object.keys(resource_types);
       shuffle(temp_resource_list);
-      temp_num_resources = Math.floor(Math.random() * (8));
+      temp_num_resources = Math.floor(Math.random() * (8) + 2);
       for (let index = 0; index < temp_num_resources; index++) {
         let temp_resource = new Resource(temp_resource_list.pop(), 1000);
         console.log(temp_resource);
@@ -160,6 +159,7 @@ function Star(sysname,index) {
   this.day = Math.floor((12 + (Math.random() * 2)) * 10) / 10;
   this.tilt = 0;
   if (index > 0) { this.tilt = Math.floor(Math.random() * 360); }
+  this.resources = [];
 }
 
 function Planet(sysname,index) {
@@ -629,9 +629,12 @@ function populateBreifDetails(array1, array2, type, bodyNum, slotNum, systemNum)
         if (element == "exit" || element == "entrance") { document.getElementById("id" + temp1).innerText = systems[portals[bodyNum][element]].name };
         if (element == "entrance" && !ships[0].entranceknown.includes(bodyNum)) { document.getElementById("id" + temp1).innerText = "????" };
         if (element == "exit" && !ships[0].exitknown.includes(bodyNum)) { document.getElementById("id" + temp1).innerText = "????" };
-      } else if (type == "interaction") {
+      } else if (type == "interaction-star" || type == "interaction-planet") {
         document.getElementById("id" + temp1).innerText =  array2[index1];
-        document.getElementById("id" + temp1).parentElement.addEventListener("click", function() { prepareInteraction(systems[systemNum].planets[bodyNum], element); });
+        let celestialbody = systems[systemNum].planets[bodyNum];
+        console.log(type, type, type, type, type, type, "type");    // visiting a star not a planet
+        if (type == "interaction-star") { celestialbody = systems[systemNum].stars[bodyNum]; }     // visiting a star not a planet
+        document.getElementById("id" + temp1).parentElement.addEventListener("click", function() { prepareInteraction(celestialbody , element); });
       } else {
         document.getElementById("id" + temp1).innerText = systems[systemNum][type][bodyNum][element] + array2[index1];
       }
@@ -647,7 +650,6 @@ function populateBreifDetails(array1, array2, type, bodyNum, slotNum, systemNum)
 function drawSample(bag) {
   let sample = bag[Math.floor(Math.random() * bag.length)];
   return sample;                            // return a randomly choosen sample from a distribution (bag)
-  
 }
 
 function continuousSample(bag) {
@@ -661,8 +663,25 @@ function shuffle(array) {
       let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
       [array[i], array[j]] = [array[j], array[i]];
     }
-  }
+}
+
   
+function findIndexofMatch(arrayofchoices, propertytomatch, exampletomatch) {
+  let matchindex = 0;
+  let matchfound = false;  
+  arrayofchoices.forEach(element => {
+    if (propertytomatch == "none") {
+      if (element == exampletomatch) { matchfound = true; }
+      if (!matchfound) { matchindex ++; }
+    } else {
+      if (element[propertytomatch] == exampletomatch) { matchfound = true; }
+      if (!matchfound) { matchindex ++; }
+    }
+  });
+  return matchindex; 
+}
+// findIndexofMatch(systems, "name", "Sol");
+
 /////////////////////////              Test Functions                     ///////////////////////////////////////
 
 function supertest(t2) {
@@ -689,8 +708,10 @@ function visitPlanet(systemNum, index, bodytype) {  // clicking on a planet or s
   createMainSection("grid-section2"); 
   let slotNum = 0;
   drawACelestialBody(systemNum, slotNum, index, bodytype, true);
+  let temp1 = "interaction-planet";
+  if (bodytype == "stars") { temp1 = "interaction-star"; }
   // next line outputs the possible interactions with the planet and adds listeners to each line
-  populateBreifDetails(planet_visit_info_list, planet_visit_info_list_suffix, "interaction", index, slotNum, systemNum);
+  populateBreifDetails(planet_visit_info_list, planet_visit_info_list_suffix, temp1, index, slotNum, systemNum);
   console.log(bodytype, bodytype, bodytype, bodytype);
   slotNum += 1;
   drawControlPannelIcon(slotNum, cp_icons[0]);
@@ -701,27 +722,62 @@ function visitPlanet(systemNum, index, bodytype) {  // clicking on a planet or s
 
 
 function prepareInteraction(targetplanet, interactiontype) {      // master function for preparing interactions with a planet
-  let targetrsourceslist = [], index = 0;
+  let targetresourceslist = [], index = 0;
+  let testcargo = 'This is a test';
   targetplanet.resources.forEach(element => {
-    if (element.interactiontype == interactiontype) { targetrsourceslist.push(index); index ++; }
+    if (element.interactiontype == interactiontype) { targetresourceslist.push(index); index ++; }
   });
-  let interactionHTMLTable = makeHTMLTable(interactiontype, targetrsourceslist.length, 7);
+
   let tempSec = document.createElement('section');
+  tempSec.id = "main-modal";
   newElement = document.getElementById("main").insertAdjacentElement('afterend',tempSec);
-  newElement.innerHTML = interactionModalHTML + interactionHTMLTable + '</div></div>';
-  let executebuttonHTML = '<button id="execute" class="button" onclick="executeInteraction()">Execute</button>';
-  newElement.innerHTML = interactionModalHTML + interactionHTMLTable + executebuttonHTML + '</div></div>';
+  newElement.innerHTML = interactionModalHTML + '</div></div>';
+
+  let parentelement = document.getElementsByClassName("modal-body")[0];
+  let tbl = makeHTMLTable2("buy", targetresourceslist.length, 7);
+  openModal("interactionModal");
+  parentelement.appendChild(tbl);
+  tbl.setAttribute("id", "buy"); 
+
+  let exebutton = document.createElement("button");
+  exebutton.id = "execute";
+  exebutton.setAttribute("class", "button"); 
+  exebutton.setAttribute("onclick", "executeInteraction()");
+  exebutton.innerText = "Execute";
+  parentelement.appendChild(exebutton);
+  
 openModal("interactionModal");
 populateTable(targetplanet, interactiontype);
-// Execute the trade
 
 }
 
 
+function makeHTMLTable2(tablename, nrows, ncolumns) {
+  let tbl = document.createElement("table");
+  let tblBody = document.createElement("tbody");
+
+  for (let i = -1; i < nrows; i++) {
+    let row = document.createElement("tr");
+    for (let j = 0; j < ncolumns; j++) {
+      let cell = document.createElement("td");
+      if (i == -1) {
+        cell = document.createElement("th");
+      }
+      let cellText = document.createTextNode("cell in row "+i+", column "+j);
+      cell.setAttribute("id", "r-" + i + "-c-" + j)
+      // can delete the next line when development is complete
+      cell.appendChild(cellText);
+      row.appendChild(cell);
+    }
+    tblBody.appendChild(row);
+  }
+  tbl.appendChild(tblBody);
+  return tbl; 
+}
+
+
 function cloneResource(originalresource, resourcetype) {
-  let resourcetype1 = originalresource.constructor.name;
-  console.log('     ' + resourcetype1);
-  let newresource = new resourcetype();
+  let newresource = new resourcetype(originalresource.name, 0);
   list1 =Object.getOwnPropertyNames(originalresource);
   list1.forEach(element => {
       console.log(originalresource[element]);
@@ -732,55 +788,75 @@ function cloneResource(originalresource, resourcetype) {
 
 
 function executeInteraction()  {
-  // need to define the following:
-  // sellers_resource
-  // buyers_resources
-  // amount_traded
+  let tblparent = document.getElementsByClassName("modal-body")[0];
+  let interactiontype = tblparent.firstElementChild.id;
+  let temp_num_resources = document.getElementById(interactiontype).rows.length - 1;    // minus 1 to account for header row
+
+  let sellers_resources, buyers_resources;
+  if (interactiontype == "buy" || interactiontype == "mine" ) {
+    sellers_resources = ships[0].currentplanet.resources;
+    buyers_resources = ships[0].resources;
+  } else if (interactiontype == "sell") {
+    sellers_resources = ships[0].resources;
+    buyers_resources = ships[0].currentplanet.resources;
+  } else {
+      alert("We have defined a type that doesn't yet have interaction code.")
+  }
+
+  for (let index = 0; index < temp_num_resources; index++) {
+    // need to add costs and profits of buying, selling, and mining
+    let transferamount = document.getElementById("inp" + index).value;
+    if (transferamount.length > 0) {
+      transferamount  = parseInt(transferamount);
+      const targetresourcename = document.getElementById("r-" + index + "-c-0").innerHTML;
+      let sellersindex = findIndexofMatch(sellers_resources, "name", targetresourcename);
+
+      let resource_already_in_buyers_list = false;
+      buyers_resources.forEach(element => {        // if resource is already listed in buyers list, simply add quantity
+        if (element.name == targetresourcename) {  
+          resource_already_in_buyers_list = true;
+          element.amount = element.amount + transferamount;
+          sellers_resources[sellersindex].amount = sellers_resources[sellersindex].amount - transferamount;
+          // break;
+        }
+      });
+      if (resource_already_in_buyers_list == false) {   // resource wasn't already listed so add it to the list
+        let newresource =  cloneResource(sellers_resources[sellersindex], Resource);
+        newresource.amount = transferamount;
+        buyers_resources.push(newresource);
+        sellers_resources[sellersindex].amount = sellers_resources[sellersindex].amount - transferamount;
+      }
 
 
+    }   
 
-  // let resource_already_in_buyers_list = false;
-  // buyers_resources.forEach(element => {        // check if resource is already listed in buyers list simply add quantity
-  //   if (element.name == sellers_resource.name) {  
-  //     resource_already_in_buyers_list = true;
-  //     element.amount = element.amount + amount_traded;
-  //     sellers_resource.amount = sellers_resource.amount - amount_traded;
-  //     // break;
-  //   }
-  // });
-  // if (resource_already_in_buyers_list == false) {   // resource wasn't already listed so add it to the list
-  //   let newresource =  cloneResource(sellers_resource, Resource);
-  //   newresource.amount = amount_traded;
-  //   buyers_resources.push(newresource);
-  //   sellers_resource.amount = sellers_resource.amount - amount_traded;
-  // }
+  }
 
-  document.getElementById("interactionModal").style.display = "none";
+  document.getElementById("main-modal").remove();
 
 }
 
 
 
 
-
-
 function populateTable(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
   if (interactiontype == "buy") {
+    // console.log(targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name);
     document.getElementById("interactionModalHeader").innerText = "Buy Some Stuff at " + targetplanet.name;
     for (let index = 0; index < buytable.length; index++) { 
-      document.getElementById("buy-header-" + index).innerText = buytable[index];
+      document.getElementById("r--1-c-" + index).innerText = buytable[index];
     }
     let index1 = 0;
     targetplanet.resources.forEach(element => {
       if (element.interactiontype == "buy") {
-        document.getElementById("buy-data-" + index1 + "-" + 0).innerText = element.name;
-        document.getElementById("buy-data-" + index1 + "-" + 1).innerText = element.amount;      
-        document.getElementById("buy-data-" + index1 + "-" + 2).innerText = "";
-        document.getElementById("buy-data-" + index1 + "-" + 3).innerText = "";  
-        document.getElementById("buy-data-" + index1 + "-" + 4).innerText = element.cost;
+        document.getElementById("r-" + index1 + "-c-" + 0).innerText = element.name;
+        document.getElementById("r-" + index1 + "-c-" + 1).innerText = element.amount;      
+        document.getElementById("r-" + index1 + "-c-" + 2).innerText = "";
+        document.getElementById("r-" + index1 + "-c-" + 3).innerText = "";  
+        document.getElementById("r-" + index1 + "-c-" + 4).innerText = element.cost;
         let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
-        document.getElementById("buy-data-" + index1 + "-" + 5).innerHTML = inputbox;      
-        document.getElementById("buy-data-" + index1 + "-" + 6).innerText = "";
+        document.getElementById("r-" + index1 + "-c-" + 5).innerHTML = inputbox;      
+        document.getElementById("r-" + index1 + "-c-" + 6).innerText = "";
         index1 ++;         
       }      
     }); 
@@ -790,39 +866,10 @@ function populateTable(targetplanet, interactiontype) {    // puts the data in t
 }
 
 
-function makeHTMLTable(tablename, nrows, ncolumns) {      // generate HTML for table (each element has a unique id)
-  const starttab = '<table id="';
-  let rowstart = '<tr id="rowname">';
-  let tabhead = '<th id="headname"></th>';
-  let tabdata = '<td id="dataname"></td>';
-  const rowend = '</tr>';
-  const tabend = '</table>';
-  let tableHTML = starttab + tablename + '">' + rowstart;
-  tableHTML = tableHTML.replace(/rowname/g, tablename + '-' + "headrow");
-  for (let index = 0; index < ncolumns; index++) {      // create the header row
-    tableHTML = tableHTML + tabhead;
-    tableHTML = tableHTML.replace(/headname/g, tablename + '-header-' + index);
-  }
-  tableHTML = tableHTML + rowend;
-
-  for (let index = 0; index < nrows; index++) {
-    tableHTML = tableHTML + rowstart;
-    tableHTML = tableHTML.replace(/rowname/g, tablename + '-' + 'datarow-' + index);
-    for (let index1 = 0; index1 < ncolumns; index1++) {
-      tableHTML = tableHTML + tabdata;
-      tableHTML = tableHTML.replace(/dataname/g, tablename + '-data-' + index + '-' + index1);      
-    }
-    tableHTML = tableHTML + rowend;
-  }
-
-  tableHTML = tableHTML + tabend
-  return tableHTML;
-}
-
 
 function openModal(modalName) {         // open a generic modal
   var modal = document.getElementById(modalName);
-  console.log(modalName);
+  // console.log(modalName);
   modal.style.display = "block";
   if (modalName == "settingsModal") {
     readSliders("colorrange", "colorrangenum");
@@ -835,17 +882,17 @@ function openModal(modalName) {         // open a generic modal
   if (modalName == "settingsModal") { modalNum = 1; }
   var span = document.getElementsByClassName("close")[modalNum];
 
-  // When the user clicks on <span> (x), close the modal
+  // When the user clicks on <span> (x), close the and remove the modal
   span.onclick = function() {
-    modal.style.display = "none";
-    if (modalName == "settingsModal") { restartGame(); }
+    document.getElementById("main-modal").remove();
+    // modal.style.display = "none";
   }
 
-  // When the user clicks anywhere outside of the modal, close it
+  // When the user clicks anywhere outside of the modal, close and remove it
   window.onclick = function(event) {
     if (event.target == modal) {
-      modal.style.display = "none";
-      if (modalName == "settingsModal") { restartGame(); }
+      document.getElementById("main-modal").remove();
+      // modal.style.display = "none";
     }
   }
 }
