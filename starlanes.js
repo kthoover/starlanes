@@ -140,6 +140,12 @@ supertest(testarray);
 
 /////////////////////////             Initialize Game                     ///////////////////////////////////////
 
+function Galaxy(galname) {
+  this.systems = [];
+  this.portals = [];
+  this.ships = [];
+}
+
 function System(sysname) {
     this.name = sysname;
     this.stars = [];
@@ -896,3 +902,16 @@ function openModal(modalName) {         // open a generic modal
     }
   }
 }
+
+
+
+
+
+
+/////////////////////////             User Interfaces                     ///////////////////////////////////////
+// The plan is to break the game into two parts
+// 1.  A server part hosts the game and keeps track of the state of all objects in the universe
+// 2.  A a UI parterver part displays the game for each player and allows the player to interact with the universe
+
+
+
