@@ -18,7 +18,7 @@ function visitPlanet(systemNum, index, bodytype) {  // clicking on a planet or s
 
 }
 
-
+// this function opens the modal, populates the model, and executes the interaction when the button is clicked
 function prepareInteraction(targetplanet, interactiontype) {      // master function for preparing interactions with a planet
   let targetresourceslist = [], index = 0;
   let testcargo = 'This is a test';
@@ -135,7 +135,8 @@ function executeInteraction()  {
 }
 
 
-function populateTable(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
+function populateTable_orginal(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
+  // future:  replace with dashboard indicators
   if (interactiontype == "buy") {
     // console.log(targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name);
     document.getElementById("interactionModalHeader").innerText = "Buy Some Stuff at " + targetplanet.name;
@@ -148,10 +149,10 @@ function populateTable(targetplanet, interactiontype) {    // puts the data in t
         document.getElementById("r-" + index1 + "-c-" + 0).innerText = element.name;
         document.getElementById("r-" + index1 + "-c-" + 1).innerText = element.amount;      
         document.getElementById("r-" + index1 + "-c-" + 2).innerText = "";
-        document.getElementById("r-" + index1 + "-c-" + 3).innerText = "";  
-        document.getElementById("r-" + index1 + "-c-" + 4).innerText = element.cost;
+        document.getElementById("r-" + index1 + "-c-" + 3).innerText = element.cost;
         let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
-        document.getElementById("r-" + index1 + "-c-" + 5).innerHTML = inputbox;      
+        document.getElementById("r-" + index1 + "-c-" + 4).innerHTML = inputbox;
+        document.getElementById("r-" + index1 + "-c-" + 5).innerText = "";       
         document.getElementById("r-" + index1 + "-c-" + 6).innerText = "";
         index1 ++;         
       }      
@@ -161,31 +162,60 @@ function populateTable(targetplanet, interactiontype) {    // puts the data in t
   
 }
 
+function populateTable(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
+  // future:  replace with dashboard indicators
+  if (interactiontype == "buy") {
+    // console.log(targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name);
+    document.getElementById("interactionModalHeader").innerText = interactiontype + " Some Stuff at " + targetplanet.name;
+    for (let index = 0; index < interaction_dict[interactiontype].length; index++) { 
+      document.getElementById("r--1-c-" + index).innerText = interaction_dict[interactiontype][index][0];
+    }
+
+
+    let index1 = 0;
+    targetplanet.resources.forEach(element => {
+      if (element.interactiontype == "buy") {
+        document.getElementById("r-" + index1 + "-c-" + 0).innerText = element.name;
+        document.getElementById("r-" + index1 + "-c-" + 1).innerText = element.amount;      
+        document.getElementById("r-" + index1 + "-c-" + 2).innerText = "";
+        document.getElementById("r-" + index1 + "-c-" + 3).innerText = element.cost;
+        let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
+        document.getElementById("r-" + index1 + "-c-" + 4).innerHTML = inputbox;
+        document.getElementById("r-" + index1 + "-c-" + 5).innerText = "";       
+        document.getElementById("r-" + index1 + "-c-" + 6).innerText = "";
+        index1 ++;         
+      }      
+    }); 
+
+  }
+  
+}
+// const interaction_buy = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
+//                          "cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
+//                          "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};
+
 
 
 function openModal(modalName) {         // open a generic modal
   var modal = document.getElementById(modalName);
   // console.log(modalName);
   modal.style.display = "block";
-  if (modalName == "settingsModal") {
-    readSliders("colorrange", "colorrangenum");
-    readSliders("heightrange", "heightrangenum");
-  }
-  if (modalName == "gameWonModal") { showFinalStats(); }
+  // if (modalName == "settingsModal") {
+  //   readSliders("colorrange", "colorrangenum");
+  //   readSliders("heightrange", "heightrangenum");
+  // }
+  // if (modalName == "gameWonModal") { showFinalStats(); }
 
-  // Get the <span> element that closes the modal
-  let modalNum = 0;
-  if (modalName == "settingsModal") { modalNum = 1; }
+  let modalNum = 0;       // Get the <span> element that closes the modal
+  // if (modalName == "settingsModal") { modalNum = 1; }
   var span = document.getElementsByClassName("close")[modalNum];
 
-  // When the user clicks on <span> (x), close the and remove the modal
-  span.onclick = function() {
+  span.onclick = function() {     // When the user clicks on <span> (x), close the and remove the modal
     document.getElementById("main-modal").remove();
     // modal.style.display = "none";
   }
 
-  // When the user clicks anywhere outside of the modal, close and remove it
-  window.onclick = function(event) {
+  window.onclick = function(event) {      // When the user clicks anywhere outside of the modal, close and remove it
     if (event.target == modal) {
       document.getElementById("main-modal").remove();
       // modal.style.display = "none";

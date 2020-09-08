@@ -10,6 +10,7 @@ let numextraportals = Math.floor(numsys * .3);
 let numstarsinsys = [1, 1, 1, 2, 2, 3, 3, 4, 5, 6];
 let numplanetsinsys = [1, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 11];
 let greekLetters = ["\u0391", "\u0392", "\u0393", "\u0394", "\u0395", "\u0396"];
+const astrobodies = ["stars", "planets", "nebulas", "blackholes"];
 let starColors = ["white", "blue", "green", "yellow", "orange", "red", "yellowgreen", "lightblue", "orangered"];
 let planetTypes = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
 let boxshadowprefix = "inset 10px 0px 12px -2px rgba(255, 255, 255, 0.2), inset -70px 0px 50px 0px black, -5px 0px 15px -4px "
@@ -77,8 +78,37 @@ const resource_types = {"Compound1" : [false, "solid", 100, 1, 2, "", "none", "n
                         "Treasure Map6" : [true, "solid", 10, 1, 6, "", "none", "none", "blank"],  
                         "Treasure Map7" : [true, "solid", 10, 1, 7, "", "none", "none", "blank"]};
 const resource_parameters = ["unitary", "state", "mass", "volume", "cost", "units", "special", "history", "extra"];
-const buytable = ["Resource", "Amount", "Available", "Constraints", "Cost", "Transfer Amount", "In Cargo"];
+// const buytable = ["Resource", "Amount", "Available", "Constraints", "Cost", "Transfer Amount", "In Cargo"];
+const buytable = ["Resource", "Amount", "Constraints", "Cost", "Transfer Amount", "In Cargo", "Max Space"];
 const interactionModalHTML = '<div id="interactionModal" class="modal"><div class="modal-content"><div class="modal-header"><span class="close">&times;</span><h1 id="interactionModalHeader">Trading Screen</h1></div><div class="modal-body">';
+
+// interaction constants define the information displayed when a particular interaction is choosen
+
+// const interaction_buy = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
+//                          "cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
+//                          "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};
+
+const interaction_buy = [["resource", "name", "astrobodies"], ["amount", "amount", "astrobodies"], ["constraints", "none", "astrobodies"],
+                         ["cost", "cost", "astrobodies"], ["transfer amount", "choice", "ships"],
+                         ["in cargo", "define_later", "ships"],  ["max space", "define_later", "ships"]];
+
+const interaction_mine = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
+                         "energy cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
+                         "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};                         
+
+const interaction_sell = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
+                         "price" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
+                         "in cargo" : ["define_later", "ships"],  "define_later" : ["define_later", "ships"]};    
+
+const interaction_politics = {"define_later" : ["name", "astrobodies"]}; 
+
+const interaction_outpost = {"define_later" : ["name", "astrobodies"]}; 
+
+const interaction_puzzle = {"define_later" : ["name", "astrobodies"]}; 
+
+const interaction_culture = {"define_later" : ["name", "astrobodies"]}; 
+
+const interaction_dict = {"buy":interaction_buy, "sell":interaction_sell, "mine":interaction_mine, "politics":interaction_politics, "outpost":interaction_outpost, "puzzle":interaction_puzzle, "culture":interaction_culture};
 
 
  
@@ -111,6 +141,7 @@ const interactionModalHTML = '<div id="interactionModal" class="modal"><div clas
      this.history = "none";                         // history of the article (may not need this)
      this.extra = "blank";                         //  (may not need this)
      this.interactiontype = "buy";                   // action indicates what the owner will do with the resource (buy, sell, allow mine, etc.)
+     this.define_later = "define later";
      let index = 0;
      resource_parameters.forEach(element => {
        this[element] = resource_types[name][index];
@@ -144,6 +175,7 @@ function Galaxy(galname) {
   this.systems = [];
   this.portals = [];
   this.ships = [];
+  this.define_later = "define later";
 }
 
 function System(sysname) {
@@ -153,6 +185,8 @@ function System(sysname) {
     this.portals = [];
     this.coodinates = [];
     this.environment = [];
+    this.define_later = "define later";
+
 } 
 
 function Star(sysname,index) {
@@ -166,6 +200,8 @@ function Star(sysname,index) {
   this.tilt = 0;
   if (index > 0) { this.tilt = Math.floor(Math.random() * 360); }
   this.resources = [];
+  this.interactions_available = [];
+  this.define_later = "define later";
 }
 
 function Planet(sysname,index) {
@@ -182,6 +218,8 @@ function Planet(sysname,index) {
   this.trade = [];
   this.alliance = [];
   this.resources = [];
+  this.interactions_available = ["buy", "sell", "mine", "politics", "outpost", "puzzle", "culture"];
+  this.define_later = "define later";
 }
 
 function Portal(portalindex, entrancesystem, exitsystem) {
@@ -196,6 +234,7 @@ function Portal(portalindex, entrancesystem, exitsystem) {
   this.exitknown = [];            // array of players who know about the portal exit (currently unused)
   this.special = "";          // TDB
   this.spinspeed = 15 + (Math.random() * 2) - 1;
+  this.define_later = "define later";
 }
 
 
@@ -212,6 +251,7 @@ function Ship(name, player) {
   this.exitknown = [];            // array of portal exits this ship knows
   this.systemknown = [];         // array of systems this ship knows
   this.currentplanet = "";      // current planet or star the ship is in orbit around--last planet visited is stored as current
+  this.define_later = "define later";
 }
 
 
