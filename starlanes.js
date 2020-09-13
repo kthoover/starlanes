@@ -745,6 +745,9 @@ function testfunction(temp1) {
   console.log("Temp1:  " + temp1);
 }
 
+function buybuy() {
+  console.log('Bye-bye');
+}
 
 
 

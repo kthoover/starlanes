@@ -135,32 +135,7 @@ function executeInteraction()  {
 }
 
 
-function populateTable_orginal(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
-  // future:  replace with dashboard indicators
-  if (interactiontype == "buy") {
-    // console.log(targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name, targetplanet.name);
-    document.getElementById("interactionModalHeader").innerText = "Buy Some Stuff at " + targetplanet.name;
-    for (let index = 0; index < buytable.length; index++) { 
-      document.getElementById("r--1-c-" + index).innerText = buytable[index];
-    }
-    let index1 = 0;
-    targetplanet.resources.forEach(element => {
-      if (element.interactiontype == "buy") {
-        document.getElementById("r-" + index1 + "-c-" + 0).innerText = element.name;
-        document.getElementById("r-" + index1 + "-c-" + 1).innerText = element.amount;      
-        document.getElementById("r-" + index1 + "-c-" + 2).innerText = "";
-        document.getElementById("r-" + index1 + "-c-" + 3).innerText = element.cost;
-        let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
-        document.getElementById("r-" + index1 + "-c-" + 4).innerHTML = inputbox;
-        document.getElementById("r-" + index1 + "-c-" + 5).innerText = "";       
-        document.getElementById("r-" + index1 + "-c-" + 6).innerText = "";
-        index1 ++;         
-      }      
-    }); 
 
-  }
-  
-}
 
 function populateTable(targetplanet, interactiontype) {    // puts the data in the interaction table opened in the modal
   // future:  replace with dashboard indicators
@@ -171,28 +146,31 @@ function populateTable(targetplanet, interactiontype) {    // puts the data in t
       document.getElementById("r--1-c-" + index).innerText = interaction_dict[interactiontype][index][0];
     }
 
-
     let index1 = 0;
     targetplanet.resources.forEach(element => {
       if (element.interactiontype == "buy") {
-        document.getElementById("r-" + index1 + "-c-" + 0).innerText = element.name;
-        document.getElementById("r-" + index1 + "-c-" + 1).innerText = element.amount;      
-        document.getElementById("r-" + index1 + "-c-" + 2).innerText = "";
-        document.getElementById("r-" + index1 + "-c-" + 3).innerText = element.cost;
-        let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
-        document.getElementById("r-" + index1 + "-c-" + 4).innerHTML = inputbox;
-        document.getElementById("r-" + index1 + "-c-" + 5).innerText = "";       
-        document.getElementById("r-" + index1 + "-c-" + 6).innerText = "";
-        index1 ++;         
+        for (let index = 0; index < interaction_dict[interactiontype].length; index++) {
+          if (interaction_dict[interactiontype][index][2] == "astrobodies") {
+            element[interaction_dict[interactiontype][index][2]]
+          }
+          if (interaction_dict[interactiontype][index][2] == "astrobodies") {
+            document.getElementById("r-" + index1 + "-c-" + index).innerText = element[interaction_dict[interactiontype][index][1]];
+          } else {
+            if (interaction_dict[interactiontype][index][1] == "choice") {
+              let inputbox = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, index1);
+              document.getElementById("r-" + index1 + "-c-" + index).innerHTML = inputbox;              
+            } else {
+              document.getElementById("r-" + index1 + "-c-" + index).innerText = ships[0][interaction_dict[interactiontype][index][1]];             
+            }
+          }           
+        }  
+        index1 ++;       
       }      
     }); 
 
   }
   
 }
-// const interaction_buy = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
-//                          "cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
-//                          "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};
 
 
 
@@ -222,3 +200,5 @@ function openModal(modalName) {         // open a generic modal
     }
   }
 }
+
+// this is it
