@@ -201,4 +201,24 @@ function openModal(modalName) {         // open a generic modal
   }
 }
 
+
+
+// visit planet--clicking on a planet starts the interaction process
+// prepareInteraction--master function for preparing interactions with a planet
+// openModal--open a generic modal
+// makeHTMLTable2(tablename, nrows, ncolumns)--generic function to make a table with nrows (including header) and ncolumns
+
+
+
+
+// populateTable--current function to populate a table
+// populat a generic table--take a row of column headers and a data block (list of lists)
+
+// executeInteraction--executes a trade
+// cloneResources--helper function to clone resources for cargo storage 
+
+
+
+
+
 // this is it
