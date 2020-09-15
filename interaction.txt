@@ -1,0 +1,8 @@
+Click planet            visitPlanet(systemNum, index, bodytype)         set current planet and draw planet and interactions
+Click Interaction       prepareInteraction(celestialbody, element)      openModal("interactionModal")
+                                                                        generateDataForSpecificInteraction(targetplanet, interactiontype) 
+                                                                        makeHTMLTable2(interactiontype, tabledata.length, tableheader.length)
+                                                                        dataIntoHTMLTable(tableheader, tabledata)
+                                                                        executeInteraction() 
+Click Execute           executeInteraction()                            cloneResource(sellers_resources[sellersindex], Resource)
+
