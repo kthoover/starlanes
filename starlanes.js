@@ -2,7 +2,11 @@
 /////////////////////////            Define Parameters                    ///////////////////////////////////////
 
 // https://codepen.io/joshbader/pen/EjXgqr
+let testflag = true;
 let hidelist = true;
+let testdataarray = [];
+
+
 let numsys = 20;
 let cp_icons =["images/controlpannelicon.jpg", "images/sunicon.png","images/shipicon.png", "images/portalicon.png", "images/mapicon.png"];
 let star_names = ["Absolutno", "Achernar", "Achird", "Acrab", "Acrux", "Acubens", "Adhafera", "Adhara", "Adhil", "Ain", "Ainalrami", "Aladfar", "Alamak", "Alasia", "Alathfar", "Albaldah", "Albali", "Albireo", "Alchiba", "Alcor", "Alcyone", "Aldebaran", "Alderamin", "Aldhanab", "Aldhibah", "Aldulfin", "Alfirk", "Algedi", "Algenib", "Algieba", "Algol", "Algorab", "Alhena", "Alioth", "Aljanah", "Alkaid", "Al Kalb al Rai", "Alkalurops", "Alkaphrah", "Alkarab", "Alkes", "Almaaz", "Almach", "Al Minliar al Asad", "Alnair", "Alnasl", "Alnilam", "Alnitak", "Alniyat", "Alphard", "Alphecca", "Alpheratz", "Alpherg", "Alrakis", "Alrescha", "Alruba", "Alsafi", "Alsciaukat", "Alsephina", "Alshain", "Alshat", "Altair", "Altais", "Alterf", "Aludra", "Alula Australis", "Alula Borealis", "Alya", "Alzirr", "Amadioha", "Amansinaya", "Anadolu", "Ancha", "Angetenar", "Aniara", "Ankaa", "Anser", "Antares", "Arcalis", "Arcturus", "Arkab Posterior", "Arkab Prior", "Arneb", "Ascella", "Asellus Australis", "Asellus Borealis", "Ashlesha", "Asellus Primus", "Asellus Secundus", "Asellus Tertius", "Aspidiske", "Asterope", "Atakoraka", "Athebyne", "Atik", "Atlas", "Atria", "Avior", "Axolotl", "Ayeyarwady", "Azelfafage", "Azha", "Azmidi", "Baekdu", "Barnard's Star", "Baten Kaitos", "Beemim", "Beid", "Belel", "Belenos", "Bellatrix", "Berehinya", "Betelgeuse", "Bharani", "Bibha", "Biham", "Bosona", "Botein", "Brachium", "Bubup", "Buna", "Bunda", "Canopus", "Capella", "Caph", "Castor", "Castula", "Cebalrai", "Ceibo", "Celaeno", "Cervantes", "Chalawan", "Chamukuy", "Chaophraya", "Chara", "Chason", "Chechia", "Chertan", "Citadelle", "Citala", "Cocibolca", "Copernicus", "Cor Caroli", "Cujam", "Cursa", "Dabih", "Dalim", "Deneb", "Deneb Algedi", "Denebola", "Diadem", "Dingolay", "Diphda", "Diwo", "Diya", "Dofida", "Dombay", "Dschubba", "Dubhe", "Dziban", "Ebla", "Edasich", "Electra", "Elgafar", "Elkurud", "Elnath", "Eltanin", "Emiw", "Enif", "Errai", "Fafnir", "Fang", "Fawaris", "Felis", "Felixvarela", "Flegetonte", "Fomalhaut", "Formosa", "Franz", "Fulu", "Funi", "Fumalsamakah", "Furud", "Fuyue", "Gacrux", "Gakyid", "Garnet Star", "Giausar", "Gienah", "Ginan", "Gloas", "Gomeisa", "Graffias", "Grumium", "Gudja", "Gumala", "Guniibuu", "Hadar", "Haedus", "Hamal", "Hassaleh", "Hatysa", "Helvetios", "Heze", "Hoggar", "Homam", "Horna", "Hunahpu", "Hunor", "Iklil", "Illyrian", "Imai", "Intercrus", "Inquill", "Intan", "Irena", "Itonda", "Izar", "Jabbah", "Jishui", "Kaffaljidhma", "Kakkab", "Kalausi", "Kamui", "Kang", "Karaka", "Kaus Australis", "Kaus Borealis", "Kaus Media", "Kaveh", "Kekouan", "Keid", "Khambalia", "Kitalpha", "Kochab", "Koeia", "Koit", "Kornephoros", "Kraz", "Kuma", "Kurhah", "La Superba", "Larawag", "Lerna", "Lesath", "Libertas", "Lich", "Liesma", "Lilii Borea", "Lionrock", "Lucilinburhuc", "Lusitania", "Maasym", "Macondo", "Mago", "Mahasim", "Mahsati", "Maia", "Malmok", "Marfark", "Marfik", "Markab", "Markeb", "Marohu", "Marsic", "Matar", "Mebsuta", "Megrez", "Meissa", "Mekbuda", "Meleph", "Menkalinan", "Menkar", "Menkent", "Menkib", "Merak", "Merga", "Meridiana", "Merope", "Mesarthim", "Miaplacidus", "Mimosa", "Minchir", "Minelauva", "Mintaka", "Mira", "Mirach", "Miram", "Mirfak", "Mirzam", "Misam", "Mizar", "Moldoveanu", "Monch", "Montuno", "Morava", "Moriah", "Mothallah", "Mouhoun", "Mpingo", "Muliphein", "Muphrid", "Muscida", "Musica", "Muspelheim", "Nahn", "Naledi", "Naos", "Nash", "Nashira", "Nasti", "Natasha", "Navi", "Nekkar", "Nembus", "Nenque", "Nervia", "Nihal", "Nikawiy", "Nosaxa", "Nunki", "Nusakan", "Nushagak", "Nyamien", "Ogma", "Okab", "Paikauhale", "Parumleo", "Peacock", "Petra", "Phact", "Phecda", "Pherkad", "Phoenicia", "Piautos", "Pincoya", "Pipoltr", "Pipirima", "Pleione", "Poerava", "Polaris", "Polaris Australis", "Polis", "Pollux", "Porrima", "Praecipua", "Prima Hyadum", "Procyon", "Propus", "Proxima Centauri", "Ran", "Rapeto", "Rasalas", "Rasalgethi", "Rasalhague", "Rastaban", "Regor", "Regulus", "Revati", "Rigel", "Rigil Kentaurus", "Rosaliadecastro", "Rotanev", "Ruchbah", "Rukbat", "Sabik", "Saclateni", "Sadachbia", "Sadalbari", "Sadalmelik", "Sadalsuud", "Sadr", "Sagarmatha", "Saiph", "Salm", "Samaya", "Sansuna", "Sargas", "Sarin", "Sarir", "Sceptrum", "Scheat", "Schedar", "Secunda Hyadum", "Segin", "Seginus", "Sham", "Shama", "Sharjah", "Shaula", "Sheliak", "Sheratan", "Sika", "Sirius", "Situla", "Skat", "Solaris", "Spica", "Sterrennacht", "Stribor", "Sualocin", "Subra", "Suhail", "Sulafat", "Syrma", "Tabit", "Taika", "Taiyangshou", "Taiyi", "Talitha", "Tangra", "Tania Australis", "Tania Borealis", "Tapecue", "Tarazed", "Tarf", "Taygeta", "Tegmine", "Tejat", "Terebellum", "Tevel", "Thabit", "Theemin", "Thuban", "Tiaki", "Tianguan", "Tianyi", "Timir", "Tislit", "Titawin", "Tojil", "Toliman", "Tonatiuh", "Torcular", "Tuiren", "Tupa", "Tupi", "Tureis", "Ukdah", "Uklun", "Unukalhai", "Unurgunite", "Uruk", "Vega", "Veritate", "Vindemiatrix", "Wasat", "Wazn", "Wezen", "Wurren", "Xamidimura", "Xihe", "Xuange", "Yed Posterior", "Yed Prior", "Yildun", "Zaniah", "Zaurak", "Zavijava", "Zhang", "Zibal", "Zosma", "Zubenelgenubi", "Zubenelhakrabi", "Zubeneschamali"];
@@ -82,15 +86,10 @@ const resource_parameters = ["unitary", "state", "mass", "volume", "cost", "unit
 const buytable = ["Resource", "Amount", "Constraints", "Cost", "Transfer Amount", "In Cargo", "Max Space"];
 const interactionModalHTML = '<div id="interactionModal" class="modal"><div class="modal-content"><div class="modal-header"><span class="close">&times;</span><h1 id="interactionModalHeader">Trading Screen</h1></div><div class="modal-body">';
 
-// interaction constants define the information displayed when a particular interaction is choosen
 
-// const interaction_buy = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
-//                          "cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
-//                          "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};
-
-const interaction_buy = [["resource", "name", "astrobodies"], ["amount", "amount", "astrobodies"], ["constraints", "none", "astrobodies"],
-                         ["cost", "cost", "astrobodies"], ["transfer amount", "choice", "ships"],
-                         ["in cargo", "define_later", "ships"],  ["max space", "define_later", "ships"]];
+const interaction_buy = [["resource", "name", 1], ["amount", "amount", 1], ["constraints", "specialrequirements", 1],
+                         ["cost", "cost", 1], ["transfer amount", "choice", 0],
+                         ["in cargo", "define_later", 0],  ["max space", "define_later", 0]];
 
 const interaction_mine = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
                          "energy cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
@@ -251,6 +250,8 @@ function Ship(name, player) {
   this.exitknown = [];            // array of portal exits this ship knows
   this.systemknown = [];         // array of systems this ship knows
   this.currentplanet = "";      // current planet or star the ship is in orbit around--last planet visited is stored as current
+  this.energy = 50000;
+  this.money = 10000;
   this.define_later = "define later";
 }
 
@@ -680,7 +681,7 @@ function populateBreifDetails(array1, array2, type, bodyNum, slotNum, systemNum)
         let celestialbody = systems[systemNum].planets[bodyNum];
         console.log(type, type, type, type, type, type, "type");    // visiting a star not a planet
         if (type == "interaction-star") { celestialbody = systems[systemNum].stars[bodyNum]; }     // visiting a star not a planet
-        document.getElementById("id" + temp1).parentElement.addEventListener("click", function() { prepareInteraction(celestialbody , element); });
+        document.getElementById("id" + temp1).parentElement.addEventListener("click", function() { prepareInteraction(element); });
       } else {
         document.getElementById("id" + temp1).innerText = systems[systemNum][type][bodyNum][element] + array2[index1];
       }
