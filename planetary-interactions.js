@@ -8,7 +8,7 @@ function visitPlanet(systemNum, index, bodytype) {  // clicking on a planet or s
   if (bodytype == "stars") { temp1 = "interaction-star"; }
   // next line outputs the possible interactions with the planet and adds listeners to each line
   populateBreifDetails(planet_visit_info_list, planet_visit_info_list_suffix, temp1, index, slotNum, systemNum);
-  console.log(bodytype, bodytype, bodytype, bodytype);
+  // console.log(bodytype, bodytype, bodytype, bodytype);
   slotNum += 1;
   drawControlPannelIcon(slotNum, cp_icons[0]);
   ships[0].currentplanet = systems[systemNum].planets[index];       // assuming we are in orbit around a planet otherwise execute next line
@@ -86,7 +86,7 @@ function executeInteraction()  {
       a_resource.amount = a_resource.amount - (transferamount * directionmultiplier);
       ships[0].resources[shipresourceindex].amount = ships[0].resources[shipresourceindex].amount + (transferamount * directionmultiplier);     
 
-      console.log('Inputindex:  ' + inputindex);
+      // console.log('Inputindex:  ' + inputindex);
       inputindex++;
     
     }
@@ -173,7 +173,7 @@ function generateDataForSpecificInteraction(interactiontype) {    // puts the da
   }
 
   ships[0].currentplanet.resources.forEach(body_resource => {
-    console.log(body_resource.name);
+    // console.log(body_resource.name);
     if (body_resource.interactiontype == interactiontype) {        
       let tablerow = [];
       for (let colnum = 0; colnum < generic_interaction.length; colnum++) {
@@ -183,7 +183,7 @@ function generateDataForSpecificInteraction(interactiontype) {    // puts the da
         } else {
           individualdataelement = "none";
         } 
-        console.log(individualdataelement);
+        // console.log(individualdataelement);
         if (colnum == 4) {
           individualdataelement = '<input id="inpx" class="large" type="number" min="0" max="1000" step="1">'.replace(/x/g, tabledata.length);
         }
@@ -207,15 +207,17 @@ function dataIntoHTMLTable(headerrow, tabledata) {
 }
 
 
+
 // let shipresourceindex = findIndexOfMatchingObject(a_resource, "name", ships[0].resources, "name");
 
 function findIndexOfMatchingObject(obj1, param1, listobj2, param2) {  // returns the index of the object in list2 with paramaters matching object1
   let matchindex = false;
   for (let index = 0; index < listobj2.length; index++) {
+    // console.log(obj1[param1] + '  ' + listobj2[index][param2] + '  ' + (obj1[param1] == listobj2[index][param2]) + '  '  + index);
     if (obj1[param1] == listobj2[index][param2]) { matchindex = index; }
   }
 
-  if (matchindex == false) {
+  if (matchindex === false) {
     // clone resource and push onto list
     if (listobj2.length > 0) {  console.log(obj1[param1] + '   ' + listobj2[0][param2]);   }
 
@@ -223,7 +225,6 @@ function findIndexOfMatchingObject(obj1, param1, listobj2, param2) {  // returns
     newobj.amount = 0;
     listobj2.push(newobj);
     matchindex = listobj2.length - 1;
-    console.log('ppppppppppppppppppp');
   }
   return matchindex
 }
@@ -233,7 +234,7 @@ function cloneResource(originalresource, resourcetype) {
   let newresource = new resourcetype(originalresource.name, 0);
   list1 =Object.getOwnPropertyNames(originalresource);
   list1.forEach(element => {
-      console.log(originalresource[element]);
+      // console.log(originalresource[element]);
       newresource[element] = originalresource[element];
   });    
   return newresource;

@@ -342,7 +342,6 @@ function createSystem(sysname) {                            // create a new syst
 }
 
 function createStars(currentSystem, sysname, numstars) {
-  console.log("creating stars");
   for (let index = 0; index < numstars; index++) {  
     let currentStar = new Star(sysname, index);
     currentSystem.stars.push(currentStar);
@@ -350,7 +349,6 @@ function createStars(currentSystem, sysname, numstars) {
 }
 
 function createPlanets(currentSystem, sysname, numplanets) {
-  console.log("creating planets");
   for (let index = 0; index < numplanets; index++) {  
     let currentPlanet = new Planet(sysname, index);
     currentSystem.planets.push(currentPlanet);
@@ -401,7 +399,7 @@ function buildPortals(entrances, exits) {
     const element2 = exits[index];
     let currentPortal = new Portal(portals.length, element1, element2);
     portals.push(currentPortal);
-    console.log(element1, element2, + "   " + index);
+    // console.log(element1, element2, + "   " + index);
     systems[element1].portals.push(portals.length-1);
     systems[element2].portals.push(portals.length-1)
   }
@@ -411,9 +409,7 @@ function buildPortals(entrances, exits) {
 
 function createShip(shipname, player) {
   let currentShip = new Ship(shipname, player);
-  console.log(shipname, player);
   ships.push(currentShip);
-  console.log(ships);
   ships[0].systemknown.push(0);
   systems[ships[0].system].portals.forEach(element => {
     if (portals[element].entrance == ships[0].system) { ships[0].entranceknown.push(element); }
@@ -469,7 +465,6 @@ function createHyperDrive() {
             let portalParentId = "slot";            
             let portalType = "portal-entrance";
             if (systemNum != portals[element].entrance) {  portalType = "portal-exit"; }
-            console.log(systemNum + "     " + portals[element].entrance + "     " + portals[element].exit);
             for (let index = 0; index < 9; index++) {         // create and draw the 9 layers of the portal
               elmntid = "pl" + index + "-slot";
               drawDOMElement(["div", portalType, portalParentId, elmntid], slotNum);
@@ -477,13 +472,10 @@ function createHyperDrive() {
             
               portalParentId = elmntid;
             }
-            console.log("pl0-slot" + slotNum);
             document.getElementById("pl0-slot" + slotNum).addEventListener("click", function() { enterPortal(element); });
             info_DOM.forEach(element1 => {
-              console.log('times through');
               drawDOMElement(element1, slotNum);
             });
-            console.log("element.portalindex:  " + element);
             document.getElementById("h2-slot" + slotNum).innerText = "Portal " + element;
             populateBreifDetails(portal_info_list, portal_info_list_suffix, "portals", element, slotNum, systemNum);            
             slotNum += 1;              
@@ -497,14 +489,12 @@ function createHyperDrive() {
         function drawPlanets(systemNum) {
           createMainSection("grid-section"); 
           let slotNum = 0;
-          console.log('slotNum:  ' + slotNum);
           for (let index = 0; index < systems[systemNum].stars.length; index++) {
             drawACelestialBody(systemNum, slotNum, index, "stars", false);
 
             populateBreifDetails(star_info_list, star_info_list_suffix, "stars", index, slotNum, systemNum);
             document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "stars"); });
             slotNum += 1;
-            console.log('slotNum:  ' + slotNum);
           } 
           for (let index = 0; index < systems[systemNum].planets.length; index++) {
             drawACelestialBody(systemNum, slotNum, index, "planets", false);
@@ -512,7 +502,6 @@ function createHyperDrive() {
             populateBreifDetails(planet_info_list, planet_info_list_suffix, "planets", index, slotNum, systemNum);
             document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "planets"); });
             slotNum += 1;
-            console.log('slotNum:  ' + slotNum);
           } 
 
           drawControlPannelIcon(slotNum, cp_icons[0]);
@@ -547,8 +536,8 @@ function createHyperDrive() {
 //////////////////////////            Action Functions                    ///////////////////////////////////////
 
 function enterPortal(portalNum) {
-  console.log(portalNum + "here");
-  console.log(portals[portalNum].entrance + "    " + portals[portalNum].exit);
+  // console.log(portalNum + "here");
+  // console.log(portals[portalNum].entrance + "    " + portals[portalNum].exit);
   createHyperDrive();
   setTimeout(function() {
     if (!ships[0].entranceknown.includes(portals[portalNum].entrance)) { ships[0].entranceknown.push(portals[portalNum].entrance); }
@@ -578,9 +567,8 @@ function drawACelestialBody(systemNum, slotNum, index, bodytype, largesize) {
     drawDOMElement(element, slotNum);
   });
   if (largesize) { document.getElementById("d2-slot" + slotNum).className ="planet__atmosphere2" } // apply planet__atmosphere2 
-  console.log("Hello:  " + systemNum + "   " + bodytype + "   " + index + "   ");
+  // console.log("Hello:  " + systemNum + "   " + bodytype + "   " + index + "   ");
   let celestialBody = systems[systemNum][bodytype][index];
-  console.log(celestialBody.name);
   applyPlanetParameters(celestialBody, index, slotNum);       // apply image, rotation, tilt, shadowing to star or planet
   info_DOM.forEach(element => {
     drawDOMElement(element, slotNum);
@@ -595,7 +583,6 @@ function applyPlanetParameters(celestialBody, index, slotNum) {
   document.getElementById("d3-slot" + slotNum).style.animationDuration = celestialBody.day + "s";
   document.getElementById("d3-slot" + slotNum).style.transform = "rotate(" + celestialBody.tilt + "deg)";
   document.getElementById("d3-slot" + slotNum).style.backgroundImage = "url(images/" + celestialBody.image + ")";
-  console.log("Sun name    " + "rotate(" + celestialBody.tilt + ")");
 }
 
 
@@ -655,7 +642,6 @@ function drawControlPannel() {
 
     }
   }
-  console.log('Drawing control pannel');
 }
 
 
