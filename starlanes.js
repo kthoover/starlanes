@@ -82,8 +82,6 @@ const resource_types = {"Compound1" : [false, "solid", 100, 1, 2, "", "none", "n
                         "Treasure Map6" : [true, "solid", 10, 1, 6, "", "none", "none", "blank"],  
                         "Treasure Map7" : [true, "solid", 10, 1, 7, "", "none", "none", "blank"]};
 const resource_parameters = ["unitary", "state", "mass", "volume", "cost", "units", "special", "history", "extra"];
-// const buytable = ["Resource", "Amount", "Available", "Constraints", "Cost", "Transfer Amount", "In Cargo"];
-const buytable = ["Resource", "Amount", "Constraints", "Cost", "Transfer Amount", "In Cargo", "Max Space"];
 const interactionModalHTML = '<div id="interactionModal" class="modal"><div class="modal-content"><div class="modal-header"><span class="close">&times;</span><h1 id="interactionModalHeader">Trading Screen</h1></div><div class="modal-body">';
 
 
@@ -91,13 +89,13 @@ const interaction_buy = [["resource", "name", 1], ["amount", "amount", 1], ["con
                          ["cost", "cost", 1], ["transfer amount", "choice", 0],
                          ["in cargo", "define_later", 0],  ["max space", "define_later", 0]];
 
-const interaction_mine = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
-                         "energy cost" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
-                         "in cargo" : ["define_later", "ships"],  "max space" : ["define_later", "ships"]};                         
+const interaction_mine = [["resource", "name", 1], ["amount", "amount", 1], ["constraints", "specialrequirements", 1],
+                          ["energy cost", "cost", 1], ["transfer amount", "choice", 0],
+                          ["in cargo", "define_later", 0],  ["define_later", "define_later", 0]];                        
 
-const interaction_sell = {"resource" : ["name", "astrobodies"], "amount" : ["amount", "astrobodies"], "constraints" : ["none", "astrobodies"],
-                         "price" : ["cost", "astrobodies"], "transfer amount" : ["choice", "ships"],
-                         "in cargo" : ["define_later", "ships"],  "define_later" : ["define_later", "ships"]};    
+const interaction_sell = [["resource", "name", 1], ["amount", "amount", 1], ["constraints", "specialrequirements", 1],
+                          ["price", "cost", 1], ["transfer amount", "choice", 0],
+                          ["in cargo", "define_later", 0],  ["define_later", "define_later", 0]];    
 
 const interaction_politics = {"define_later" : ["name", "astrobodies"]}; 
 
@@ -127,32 +125,146 @@ const interaction_dict = {"buy":interaction_buy, "sell":interaction_sell, "mine"
    });
  }
  
- function Resource(name, amount) {
-     this.name = name;
-     this.amount = amount;
-     this.unitary = true;                     // [unitary (true), divisible (false)]   
-     this.state = "solid";                         // [solid, liquid, gas, plasma]
-     this.mass = "2";                          // mass per unit
-     this.volume = "";                       // volume per unit
-     this.cost = "";                         // cost per unit
-     this.units = "";                         // (may not need this)
-     this.specialrequirements = "none";                         // special requirements for hauling (may not need this)
-     this.history = "none";                         // history of the article (may not need this)
-     this.extra = "blank";                         //  (may not need this)
-     this.interactiontype = "buy";                   // action indicates what the owner will do with the resource (buy, sell, allow mine, etc.)
-     this.define_later = "define later";
-     let index = 0;
-     resource_parameters.forEach(element => {
-       this[element] = resource_types[name][index];
-       index ++;
-     }); 
- } 
+ class Resource {
+  constructor(name, amount) {
+    const interaction_possibilites = ["buy", "sell", "mine"];
+    this.name = name;
+    this.amount = amount; // REPLACE THIS IN NEW MODEL
+    this.unitary = true; // [unitary (true), divisible (false)]   
+    this.state = "solid"; // [solid, liquid, gas, plasma]
+    this.mass = "2"; // mass per unit
+    this.volume = ""; // volume per unit
+    this.cost = ""; // cost per unit--REPLACE THIS IN NEW MODEL
+    this.units = ""; // (may not need this)
+    this.specialrequirements = "none"; // special requirements for hauling (may not need this)
+    this.history = "none"; // history of the article (may not need this)
+    this.extra = "blank"; //  (may not need this)
+
+    //  this.interactiontype = "buy";                   // action indicates what the owner will do with the resource (buy, sell, allow mine, etc.)
+    this.interactiontype = drawSample(interaction_possibilites); // testing--randomize what the planet does with the resource
+    this.define_later = "define later";
+    let index = 0;
+    resource_parameters.forEach(element => {
+      this[element] = resource_types[name][index];
+      index++;
+    });
+  }
+} 
 
 
 let portal_table_text = "<table><tbody><tr><th>From:</th><th>System:</th><th>To:</th></tr>"
 let portal_table_row = '<tr><td id="from*"></td><td id="system*"></td><td id="to*"></td></tr>';
 let portal_table_end = "</tbody></table>";
 
+
+
+/////////////////////////             Initialize Game                     ///////////////////////////////////////
+
+class Galaxy {
+  constructor(galname) {
+    this.systems = [];
+    this.portals = [];
+    this.ships = [];
+    this.define_later = "define later";
+  }
+}
+
+class System {
+  constructor(sysname) {
+    this.name = sysname;
+    this.stars = [];
+    this.planets = [];
+    this.portals = [];
+    this.coodinates = [];
+    this.environment = [];
+    this.define_later = "define later";
+
+  }
+} 
+
+class Star {
+  constructor(sysname, index) {
+    this.name = sysname + '-' + greekLetters[index];
+    this.color = drawSample(starColors);
+    this.shadowcolor = solarcoronaprefix + this.color;
+    this.image = this.color + ".jpg";
+    this.year = "????";
+    // this.image = this.color + Math.floor(Math.random() * 10)) + ".jpg";       // this allows for 10 different stars of each collor
+    this.day = Math.floor((12 + (Math.random() * 2)) * 10) / 10;
+    this.tilt = 0;
+    if (index > 0) { this.tilt = Math.floor(Math.random() * 360); }
+    this.resources = [];
+    this.resourcelist = [];
+    this.interactions_available = [];
+    this.define_later = "define later";
+  }
+}
+
+class Planet {
+  constructor(sysname, index) {
+    this.name = sysname + '-' + planet_numbers[index];
+    this.image = drawSample(planetTypes) + ".jpg";
+    this.shadowcolor = boxshadowprefix + "pink";
+    this.day = 40 - (Math.random() * 37);
+    this.tilt = Math.random() * 360;
+    this.characteristics = [];
+    this.materials = [];
+    this.inhabitants = [];
+    this.owners = [];
+    this.tech = [0, 2];
+    this.trade = [];
+    this.alliance = [];
+    this.resources = [];
+    this.resourcelist = [];
+    this.interactions_available = ["buy", "sell", "mine", "politics", "outpost", "puzzle", "culture"];
+    this.define_later = "define later";
+  }
+}
+
+class Portal {
+  constructor(portalindex, entrancesystem, exitsystem) {
+    if (entrancesystem == exitsystem) { console.log("DANGER WILL ROBINSON!!!!!"); }
+    this.index = portalindex;
+    this.entrance = entrancesystem;
+    this.exit = exitsystem;
+    this.distance = 100; // need to calculate--temporarily set all lengths to 100
+    this.fees = 100;
+    this.monsters = "no";
+    this.entranceknown = []; // array of players who know about the portal entrance (currently unused)
+    this.exitknown = []; // array of players who know about the portal exit (currently unused)
+    this.special = ""; // TDB
+    this.spinspeed = 15 + (Math.random() * 2) - 1;
+    this.define_later = "define later";
+  }
+}
+
+
+class Ship {
+  constructor(name, player) {
+    this.name = name;
+    this.player = player;
+    this.resources = [];
+    this.resourcelist = [];       // list of resources in ship--each entry is a list of [name, amount]
+    this.system = 0;
+    this.location = []; // ???
+    this.cargo = [];
+    this.fuel = 100;
+    this.shields = 100;
+    this.entranceknown = []; // array of portal entrance this ship knows
+    this.exitknown = []; // array of portal exits this ship knows
+    this.systemknown = []; // array of systems this ship knows
+    this.currentplanet = ""; // current planet or star the ship is in orbit around--last planet visited is stored as current
+    this.energy = 50000;
+    this.money = 10000;
+    this.define_later = "define later";
+
+  }
+  adjustresource(resourcename, increaseamount) {
+    const index = findIndexofMatch(this.resources, "name", resourcename);
+    this.resources[index].amount = this.resources[index].amount + increaseamount;
+    // need to adjust cargo hold at some point
+  }
+}
 
 
 /////////////////////////                Play Game                        ///////////////////////////////////////
@@ -167,93 +279,6 @@ resourcePlanets();
 drawPortals(0);               // this is the system number that the ship is currently occupying
 supertest(testarray);
 
-
-/////////////////////////             Initialize Game                     ///////////////////////////////////////
-
-function Galaxy(galname) {
-  this.systems = [];
-  this.portals = [];
-  this.ships = [];
-  this.define_later = "define later";
-}
-
-function System(sysname) {
-    this.name = sysname;
-    this.stars = [];
-    this.planets = [];
-    this.portals = [];
-    this.coodinates = [];
-    this.environment = [];
-    this.define_later = "define later";
-
-} 
-
-function Star(sysname,index) {
-  this.name = sysname + '-' + greekLetters[index];
-  this.color = drawSample(starColors);
-  this.shadowcolor = solarcoronaprefix + this.color;
-  this.image = this.color + ".jpg";
-  this.year = "????"
-  // this.image = this.color + Math.floor(Math.random() * 10)) + ".jpg";       // this allows for 10 different stars of each collor
-  this.day = Math.floor((12 + (Math.random() * 2)) * 10) / 10;
-  this.tilt = 0;
-  if (index > 0) { this.tilt = Math.floor(Math.random() * 360); }
-  this.resources = [];
-  this.interactions_available = [];
-  this.define_later = "define later";
-}
-
-function Planet(sysname,index) {
-  this.name = sysname + '-' + planet_numbers[index];
-  this.image = drawSample(planetTypes)+ ".jpg";
-  this.shadowcolor = boxshadowprefix + "pink";
-  this.day = 40 - (Math.random() * 37);
-  this.tilt = Math.random() * 360;
-  this.characteristics = [];
-  this.materials = [];
-  this.inhabitants = [];
-  this.owners = [];
-  this.tech = [0,2];
-  this.trade = [];
-  this.alliance = [];
-  this.resources = [];
-  this.interactions_available = ["buy", "sell", "mine", "politics", "outpost", "puzzle", "culture"];
-  this.define_later = "define later";
-}
-
-function Portal(portalindex, entrancesystem, exitsystem) {
-  if (entrancesystem == exitsystem) { console.log("DANGER WILL ROBINSON!!!!!"); }
-  this.index = portalindex;
-  this.entrance = entrancesystem;
-  this.exit = exitsystem;
-  this.distance = 100;        // need to calculate--temporarily set all lengths to 100
-  this.fees = 100;
-  this.monsters = "no";
-  this.entranceknown = [];            // array of players who know about the portal entrance (currently unused)
-  this.exitknown = [];            // array of players who know about the portal exit (currently unused)
-  this.special = "";          // TDB
-  this.spinspeed = 15 + (Math.random() * 2) - 1;
-  this.define_later = "define later";
-}
-
-
-function Ship(name, player) {
-  this.name = name;
-  this.player = player;
-  this.resources = [];
-  this.system = 0;
-  this.location = [];       // ???
-  this.cargo = [];
-  this.fuel = 100;
-  this.shields = 100;
-  this.entranceknown = [];            // array of portal entrance this ship knows
-  this.exitknown = [];            // array of portal exits this ship knows
-  this.systemknown = [];         // array of systems this ship knows
-  this.currentplanet = "";      // current planet or star the ship is in orbit around--last planet visited is stored as current
-  this.energy = 50000;
-  this.money = 10000;
-  this.define_later = "define later";
-}
 
 
 templist = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
@@ -291,7 +316,6 @@ function tableOfPortals() {
       
     });
 
-
     document.getElementById("system" + element).innerText = '   ' + systems[element].name + '   ';
     document.getElementById("to" + element).innerText = to_list;
     document.getElementById("from" + element).innerText = from_list;
@@ -299,6 +323,8 @@ function tableOfPortals() {
   });
   drawControlPannelIcon(1, cp_icons[0]);
 }
+
+
 function drawPortalTable(num_datarows) {
   createMainSection("portal_table");
   let table_rows = [];
@@ -455,84 +481,84 @@ function createHyperDrive() {
 //############################################### Create a Solar System
 
 
-        function drawPortals(systemNum) {
-          createMainSection("grid-section");
-          let slotNum = 0;
-          systems[systemNum].portals.forEach(element => {
-            // let portalParentId = "main";
+function drawPortals(systemNum) {
+  createMainSection("grid-section");
+  let slotNum = 0;
+  systems[systemNum].portals.forEach(element => {
+    // let portalParentId = "main";
 
-            drawDOMElement(["article", "card card", "main", "slot"], slotNum);
-            let portalParentId = "slot";            
-            let portalType = "portal-entrance";
-            if (systemNum != portals[element].entrance) {  portalType = "portal-exit"; }
-            for (let index = 0; index < 9; index++) {         // create and draw the 9 layers of the portal
-              elmntid = "pl" + index + "-slot";
-              drawDOMElement(["div", portalType, portalParentId, elmntid], slotNum);
-              document.getElementById(elmntid+slotNum).style.animationDuration = portals[element].spinspeed + "s"; // assign the randomized spin for the portal
-            
-              portalParentId = elmntid;
-            }
-            document.getElementById("pl0-slot" + slotNum).addEventListener("click", function() { enterPortal(element); });
-            info_DOM.forEach(element1 => {
-              drawDOMElement(element1, slotNum);
-            });
-            document.getElementById("h2-slot" + slotNum).innerText = "Portal " + element;
-            populateBreifDetails(portal_info_list, portal_info_list_suffix, "portals", element, slotNum, systemNum);            
-            slotNum += 1;              
-          
-          });
-          drawControlPannelIcon(slotNum, cp_icons[0]);
-        }
-
-
-
-        function drawPlanets(systemNum) {
-          createMainSection("grid-section"); 
-          let slotNum = 0;
-          for (let index = 0; index < systems[systemNum].stars.length; index++) {
-            drawACelestialBody(systemNum, slotNum, index, "stars", false);
-
-            populateBreifDetails(star_info_list, star_info_list_suffix, "stars", index, slotNum, systemNum);
-            document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "stars"); });
-            slotNum += 1;
-          } 
-          for (let index = 0; index < systems[systemNum].planets.length; index++) {
-            drawACelestialBody(systemNum, slotNum, index, "planets", false);
-
-            populateBreifDetails(planet_info_list, planet_info_list_suffix, "planets", index, slotNum, systemNum);
-            document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "planets"); });
-            slotNum += 1;
-          } 
-
-          drawControlPannelIcon(slotNum, cp_icons[0]);
-
-
-          
-        }
+    drawDOMElement(["article", "card card", "main", "slot"], slotNum);
+    let portalParentId = "slot";            
+    let portalType = "portal-entrance";
+    if (systemNum != portals[element].entrance) {  portalType = "portal-exit"; }
+    for (let index = 0; index < 9; index++) {         // create and draw the 9 layers of the portal
+      elmntid = "pl" + index + "-slot";
+      drawDOMElement(["div", portalType, portalParentId, elmntid], slotNum);
+      document.getElementById(elmntid+slotNum).style.animationDuration = portals[element].spinspeed + "s"; // assign the randomized spin for the portal
+    
+      portalParentId = elmntid;
+    }
+    document.getElementById("pl0-slot" + slotNum).addEventListener("click", function() { enterPortal(element); });
+    info_DOM.forEach(element1 => {
+      drawDOMElement(element1, slotNum);
+    });
+    document.getElementById("h2-slot" + slotNum).innerText = "Portal " + element;
+    populateBreifDetails(portal_info_list, portal_info_list_suffix, "portals", element, slotNum, systemNum);            
+    slotNum += 1;              
+  
+  });
+  drawControlPannelIcon(slotNum, cp_icons[0]);
+}
 
 
 
+function drawPlanets(systemNum) {
+  createMainSection("grid-section"); 
+  let slotNum = 0;
+  for (let index = 0; index < systems[systemNum].stars.length; index++) {
+    drawACelestialBody(systemNum, slotNum, index, "stars", false);
 
-        function drawSlot([elementtype, classname, parentid, elmntid], slotNum, planettypeNum) {   // DELETE WHEN DONE WITH PLANET SECTION
-            let elmnt = document.createElement(elementtype);
-            elmnt.setAttribute("class", classname);                             // need to adjust for planet type
-            if (elementtype == "article") { elmnt.setAttribute("class", "card card--" + sol_planet_list[planettypeNum]["name"]); }  // remove once using generic
-            if (elmntid != null) { elmnt.setAttribute("id", elmntid+slotNum); }         // need to adjust to slot number
-            let tempparentid = parentid
-            if (parentid != "main") { tempparentid = parentid+slotNum }
-            document.getElementById(tempparentid).appendChild(elmnt);
+    populateBreifDetails(star_info_list, star_info_list_suffix, "stars", index, slotNum, systemNum);
+    document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "stars"); });
+    slotNum += 1;
+  } 
+  for (let index = 0; index < systems[systemNum].planets.length; index++) {
+    drawACelestialBody(systemNum, slotNum, index, "planets", false);
 
-        }
+    populateBreifDetails(planet_info_list, planet_info_list_suffix, "planets", index, slotNum, systemNum);
+    document.getElementById("d2-slot" + slotNum).addEventListener("click", function() { visitPlanet(systemNum, index, "planets"); });
+    slotNum += 1;
+  } 
 
-        function drawDOMElement([elementtype, classname, parentid, elmntid], slotNum) {
-          let elmnt = document.createElement(elementtype);
-          elmnt.setAttribute("class", classname);                            
-          if (elmntid != null) { elmnt.setAttribute("id", elmntid+slotNum); }         // needed to incorporate slot number
-          let tempparentid = parentid
-          if (parentid != "main") { tempparentid = parentid+slotNum }                 // needed to incorporate slot number
-          document.getElementById(tempparentid).appendChild(elmnt);
+  drawControlPannelIcon(slotNum, cp_icons[0]);
 
-      }
+
+  
+}
+
+
+
+
+function drawSlot([elementtype, classname, parentid, elmntid], slotNum, planettypeNum) {   // DELETE WHEN DONE WITH PLANET SECTION
+    let elmnt = document.createElement(elementtype);
+    elmnt.setAttribute("class", classname);                             // need to adjust for planet type
+    if (elementtype == "article") { elmnt.setAttribute("class", "card card--" + sol_planet_list[planettypeNum]["name"]); }  // remove once using generic
+    if (elmntid != null) { elmnt.setAttribute("id", elmntid+slotNum); }         // need to adjust to slot number
+    let tempparentid = parentid
+    if (parentid != "main") { tempparentid = parentid+slotNum }
+    document.getElementById(tempparentid).appendChild(elmnt);
+
+}
+
+function drawDOMElement([elementtype, classname, parentid, elmntid], slotNum) {
+  let elmnt = document.createElement(elementtype);
+  elmnt.setAttribute("class", classname);                            
+  if (elmntid != null) { elmnt.setAttribute("id", elmntid+slotNum); }         // needed to incorporate slot number
+  let tempparentid = parentid
+  if (parentid != "main") { tempparentid = parentid+slotNum }                 // needed to incorporate slot number
+  document.getElementById(tempparentid).appendChild(elmnt);
+
+}
 //////////////////////////            Action Functions                    ///////////////////////////////////////
 
 function enterPortal(portalNum) {
@@ -685,11 +711,13 @@ function drawSample(bag) {
   return sample;                            // return a randomly choosen sample from a distribution (bag)
 }
 
+
 function continuousSample(bag) {
   let sample = drawSample(bag) + Math.random() + .05 * drawSample(bag) - .5;
   if (sample < 0) { sample = 0; }
   return sample;                            // return a randomly choosen sample from a distribution (bag)
 }
+
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {

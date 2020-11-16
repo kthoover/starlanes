@@ -359,7 +359,7 @@
 
 
   /********************       interaction table          ***************************************/
-  #buy {
+  .modal-body {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     margin: 15px;
@@ -368,17 +368,17 @@
     border-radius: 100px; */
   }
   
-  #buy td, #buy th {
+  .modal-body td, .modal-body th {
     border: 1px solid #ddd;
     padding: 8px;
   
   }
   
-  #buy tr:nth-child(even){background-color: #94dee4;}
+  .modal-body tr:nth-child(even){background-color: #94dee4;}
   
-  #buy tr:hover {background-color: #ddd;}
+  .modal-body tr:hover {background-color: #ddd;}
   
-  #buy th {
+  .modal-body th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;

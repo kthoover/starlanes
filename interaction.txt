@@ -6,3 +6,32 @@ Click Interaction       prepareInteraction(celestialbody, element)      openModa
                                                                         executeInteraction() 
 Click Execute           executeInteraction()                            cloneResource(sellers_resources[sellersindex], Resource)
 
+
+
+Other Interactions:  (politics, outpost, puzzle, culture)
+
+Politics:
+    Allies
+    Enemies
+    Neutral
+
+
+
+Outpost:
+    Automated Mining
+    Automated Colony
+    Cyro Colony
+    Military Outpost
+
+
+
+Puzzle:
+    DNA
+    Decoding
+    
+
+
+
+
+Culture:
+
